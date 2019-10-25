@@ -2,7 +2,7 @@
 
 This package aims to provide a simple interface for creating php config files.
 
-###Usage
+### Usage
 
 ```php
 <?php
