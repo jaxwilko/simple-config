@@ -141,6 +141,41 @@ $compiler->addSection(new Section([
     ]));
 ```
 
+Functions can be passed in by prefixing the method with `@@`. E.g.
+
+```php
+<?php
+
+$compiler->addSection(new Section([
+    'title' => 'Section',
+    'key' => 'section',
+    'comment' => 'This is a section',
+    'value' => [
+        'foo' => '@@env(\'VALUE\')',
+    ]
+]));
+```
+
+Will result in:
+
+```php
+<?php
+
+return [
+    /*
+    |----------------------------------------
+    | Section
+    |----------------------------------------
+    | This is a section
+    |
+    */
+
+    'section' => [
+        'foo' => env('VALUE'),
+    ],
+];
+```
+
 Compiler options can be set via:
 
 ```php
