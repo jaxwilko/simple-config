@@ -168,4 +168,82 @@ PHP;
 
         $this->assertEquals($expected, $this->compiler->render());
     }
+
+    public function testAllowFunctions(): void
+    {
+        $this->compiler->reset()->addSection(new \SimpleConfig\Section([
+            'title' => 'Section test',
+            'key' => 'section',
+            'comment' => 'This is a section',
+            'value' => [
+                'foo' => 'bar',
+                'bar' => [
+                    '@@foo(\'abc\')'
+                ]
+            ]
+        ]));
+
+        $expected = <<<PHP
+<?php
+
+return [
+    /*
+    |----------------------------------------
+    | Section test
+    |----------------------------------------
+    | This is a section
+    |
+    */
+
+    'section' => [
+        'foo' => 'bar',
+        'bar' => [
+            foo('abc'),
+        ],
+    ],
+];
+
+PHP;
+
+        $this->assertEquals($expected, $this->compiler->render());
+    }
+
+    public function testAllowAtSymbol(): void
+    {
+        $this->compiler->reset()->addSection(new \SimpleConfig\Section([
+            'title' => 'Section test',
+            'key' => 'section',
+            'comment' => 'This is a section',
+            'value' => [
+                'foo' => 'bar',
+                'bar' => [
+                    '@foo(\'abc\')'
+                ]
+            ]
+        ]));
+
+        $expected = <<<PHP
+<?php
+
+return [
+    /*
+    |----------------------------------------
+    | Section test
+    |----------------------------------------
+    | This is a section
+    |
+    */
+
+    'section' => [
+        'foo' => 'bar',
+        'bar' => [
+            '@foo(\'abc\')',
+        ],
+    ],
+];
+
+PHP;
+
+        $this->assertEquals($expected, $this->compiler->render());
+    }
 }
