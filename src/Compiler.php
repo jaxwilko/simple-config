@@ -92,6 +92,13 @@ class Compiler
                 $valueLines = explode(PHP_EOL, VarExporter::export($section->value));
 
                 foreach ($valueLines as $index => $line) {
+
+                    preg_match_all('/\'\@[@](.*.?)\'/', $line, $matches);
+
+                    if ((isset($matches[0]) && $matches[0]) && (isset($matches[1]) && $matches[1])) {
+                        $line = str_replace($matches[0][0], stripslashes($matches[1][0]), $line);
+                    }
+
                     $document .= $indentation . ($index === 0 && $section->key ? '\'' . $section->key . '\' => ' : '');
                     $document .= $line . ($index === count($valueLines) - 1 ? ',' : '') . PHP_EOL;
                 }
