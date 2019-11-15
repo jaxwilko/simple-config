@@ -1,5 +1,7 @@
 {
     "name": "jaxwilko/simple-config",
+    "description": "A simple fluent interface for creating php config files",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jack Wilkinson",
