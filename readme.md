@@ -2,6 +2,14 @@
 
 This package aims to provide a simple interface for creating php config files.
 
+### Installation
+
+Add the package to your project via:
+
+```
+composer require jaxwilko/simple-config
+```
+
 ### Usage
 
 ```php
