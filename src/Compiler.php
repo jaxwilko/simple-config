@@ -59,58 +59,18 @@ class Compiler
 
     public function render(): string
     {
-        $indentation = $this->option('tabs')
-            ? "\t"
-            : str_repeat(' ', $this->option('indent'));
-
-        $document = sprintf('<?php%1$s%1$sreturn [%1$s', PHP_EOL);
+        $document = new Document(
+            $this->option('tabs') ? "\t" : str_repeat(' ', $this->option('indent')),
+            $this->option('length')
+        );
 
         foreach ($this->sections as $sectionIndex => $section) {
-            if ($section->title || $section->comment) {
-                $document .= $indentation . '/*' . PHP_EOL;
-            }
-            if ($section->title) {
-                $document .= $indentation . '|' . str_repeat('-', $this->option('length')) . PHP_EOL;
-                $document .= $indentation . '| ' . $section->title . PHP_EOL;
-                if (!$section->comment) {
-                    $document .= $indentation . '|' . PHP_EOL;
-                }
-            }
-            if ($section->comment) {
-                $document .= $indentation . '|' . str_repeat('-', $this->option('length')) . PHP_EOL;
-                $comment = wordwrap(str_replace(PHP_EOL, ' ', $section->comment), $this->option('length'));
-                foreach ((strpos($comment, PHP_EOL) !== false ? explode(PHP_EOL, $comment) : [$comment]) as $line) {
-                    $document .= $indentation . '| ' . $line . PHP_EOL;
-                }
-                $document .= $indentation . '|' . PHP_EOL;
-            }
-            if ($section->title || $section->comment) {
-                $document .= $indentation . '*/' . PHP_EOL . PHP_EOL;
-            }
-
-            if ($section->value) {
-                $valueLines = explode(PHP_EOL, VarExporter::export($section->value));
-
-                foreach ($valueLines as $index => $line) {
-
-                    preg_match_all('/\'\@[@](.*.?)\'/', $line, $matches);
-
-                    if ((isset($matches[0]) && $matches[0]) && (isset($matches[1]) && $matches[1])) {
-                        $line = str_replace($matches[0][0], stripslashes($matches[1][0]), $line);
-                    }
-
-                    $document .= $indentation . ($index === 0 && $section->key ? '\'' . $section->key . '\' => ' : '');
-                    $document .= $line . ($index === count($valueLines) - 1 ? ',' : '') . PHP_EOL;
-                }
-                if ($sectionIndex !== count($this->sections) - 1) {
-                    $document .= PHP_EOL;
-                }
-            }
+            $document->writeSection($section, $sectionIndex === count($this->sections) - 1);
         }
 
-        $document .= '];' . PHP_EOL;
+        $document->end();
 
-        return $document;
+        return $document->getContent();
     }
 
     public function __toString(): string
