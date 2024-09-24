@@ -1,3 +1,5 @@
+> Archived: use [winter/laravel-config-writer](https://github.com/wintercms/laravel-config-writer) instead.
+
 # SimpleConfig
 
 This package aims to provide a simple interface for creating php config files.
